@@ -195,7 +195,6 @@ public class OBSUnderFileSystem extends ObjectUnderFileSystem {
   private final class OBSObjectListingChunk implements ObjectListingChunk {
     final ListObjectsRequest mRequest;
     final ObjectListing mResult;
-
     OBSObjectListingChunk(ListObjectsRequest request, ObjectListing result) throws IOException {
       mRequest = request;
       mResult = result;
@@ -239,7 +238,7 @@ public class OBSUnderFileSystem extends ObjectUnderFileSystem {
   protected ObjectStatus getObjectStatus(String key) {
     try {
       ObjectMetadata meta = mClient.getObjectMetadata(mBucketName, key);
-      if (meta == null) {
+      if (meta == null || meta.getContentType().contains("application/x-directory")) {
         return null;
       }
       return new ObjectStatus(key, meta.getEtag(), meta.getContentLength(),
